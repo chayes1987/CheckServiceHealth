@@ -6,5 +6,7 @@ from enum import Enum
 
 
 class Config(Enum):
-    TOPIC = 0
-    ADDRESSES = 1
+    PUB_TOPIC = 0
+    SUB_TOPIC = 1
+    ADDRESSES = 2
+    PUB_ADDRESS = 3
