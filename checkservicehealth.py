@@ -1,8 +1,10 @@
 __author__ = 'Conor'
 
-# The official documentation was consulted for all 3rd party libraries used
-# ZeroMQ -> https://learning-0mq-with-pyzmq.readthedocs.org/en/latest/pyzmq/patterns/pubsub.html
+# The official documentation was consulted for all three 3rd party libraries used
+# 0mq -> https://learning-0mq-with-pyzmq.readthedocs.org/en/latest/pyzmq/patterns/pubsub.html
+# APScheduler -> https://apscheduler.readthedocs.org/en/latest/userguide.html#code-examples
 
+from apscheduler.schedulers.background import BlockingScheduler
 import zmq
 import threading
 
@@ -44,3 +46,25 @@ class CheckServiceHealth:
         global publisher
         publisher = context.socket(zmq.PUB)
         publisher.bind(pub_addr)
+
+    def initialize_scheduler(self, topic, interval):
+        scheduler = BlockingScheduler()
+        print('Scheduler initialized...')
+        self.schedule_jobs(scheduler, topic, interval)
+        print('Scheduler Running...')
+
+        try:
+            scheduler.start()
+        except (KeyboardInterrupt, SystemExit):
+            print('Scheduler Stopped...')
+            pass
+
+    @staticmethod
+    def publish_check_service_health_command(topic):
+        if None != publisher:
+            publisher.send_string(topic)
+            print('PUB: ' + topic)
+
+    def schedule_jobs(self, sched, topic, interval):
+        sched.add_job(self.publish_check_service_health_command,
+                      'interval', minutes=interval, args=topic)

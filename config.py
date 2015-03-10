@@ -10,3 +10,4 @@ class Config(Enum):
     SUB_TOPIC = 1
     ADDRESSES = 2
     PUB_ADDRESS = 3
+    PUB_INTERVAL = 4
