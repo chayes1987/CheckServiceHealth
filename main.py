@@ -14,7 +14,7 @@ def read_config():
         sub_topic = config.get('Topics', 'SUB_TOPIC')
         pub_topic = config.get('Topics', 'PUB_TOPIC')
         pub_addr = config.get('Pub Address', 'PUB_ADDR')
-        interval = config.get('Interval', 'INTERVAL')
+        interval = config.get('Interval', 'PUB_INTERVAL')
         addresses = config.items('Addresses')
     except (IOError, Error):
         print('Error with config file...')
