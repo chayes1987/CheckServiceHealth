@@ -50,7 +50,8 @@ class CheckServiceHealth:
     def initialize_scheduler(self, topic, interval):
         scheduler = BlockingScheduler()
         print('Scheduler initialized...')
-        self.schedule_jobs(scheduler, topic, int(interval))
+        scheduler.add_job(self.publish_check_service_health_command,
+                          'interval', minutes=int(interval), args=[topic])
         print('Scheduler Running...')
 
         try:
@@ -64,7 +65,3 @@ class CheckServiceHealth:
         if None != publisher:
             publisher.send_string(topic)
             print('PUB: ' + topic)
-
-    def schedule_jobs(self, sched, topic, interval):
-        sched.add_job(self.publish_check_service_health_command,
-                      'interval', minutes=interval, args=topic)
