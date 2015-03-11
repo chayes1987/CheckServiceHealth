@@ -20,7 +20,7 @@ def read_config():
         print('Error with config file...')
         return None
 
-    return sub_topic, pub_topic, addresses, pub_addr, interval
+    return pub_topic, sub_topic, addresses, pub_addr, interval
 
 
 if __name__ == '__main__':

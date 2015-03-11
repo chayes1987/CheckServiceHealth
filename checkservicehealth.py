@@ -36,7 +36,7 @@ class CheckServiceHealth:
             subscriber.connect(address)
 
         subscriber.setsockopt(zmq.SUBSCRIBE, str.encode(sub_topic))
-        print('SUB: Heartbeats...')
+        print('SUB: Heartbeat...')
 
         while True:
             print('REC: ' + subscriber.recv().decode())
