@@ -29,13 +29,13 @@ class CheckServiceHealth:
         thread.start()
 
     @staticmethod
-    def subscribe(addrs, topic):
+    def subscribe(addresses, sub_topic):
         subscriber = context.socket(zmq.SUB)
 
-        for key, address in addrs:
+        for key, address in addresses:
             subscriber.connect(address)
 
-        subscriber.setsockopt(zmq.SUBSCRIBE, str.encode(topic))
+        subscriber.setsockopt(zmq.SUBSCRIBE, str.encode(sub_topic))
         print('SUB: Heartbeats...')
 
         while True:
@@ -50,7 +50,7 @@ class CheckServiceHealth:
     def initialize_scheduler(self, topic, interval):
         scheduler = BlockingScheduler()
         print('Scheduler initialized...')
-        self.schedule_jobs(scheduler, topic, interval)
+        self.schedule_jobs(scheduler, topic, int(interval))
         print('Scheduler Running...')
 
         try:
