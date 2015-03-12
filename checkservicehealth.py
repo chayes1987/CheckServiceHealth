@@ -10,6 +10,7 @@ import threading
 
 publisher = None
 context = zmq.Context()
+received_services_list = []
 
 
 class CheckServiceHealth:
@@ -28,8 +29,7 @@ class CheckServiceHealth:
         thread.daemon = True
         thread.start()
 
-    @staticmethod
-    def subscribe(addresses, sub_topic):
+    def subscribe(self, addresses, sub_topic):
         subscriber = context.socket(zmq.SUB)
 
         for key, address in addresses:
@@ -39,7 +39,10 @@ class CheckServiceHealth:
         print('SUB: ' + sub_topic)
 
         while True:
-            print('REC: ' + subscriber.recv().decode())
+            message = subscriber.recv().decode()
+            print('REC: ' + message)
+            service = self.parse_message(message, '<params>', '</params>')
+            self.received_services_list.append(service)
 
     @staticmethod
     def initialize_publisher(pub_addr):
