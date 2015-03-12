@@ -36,7 +36,7 @@ class CheckServiceHealth:
             subscriber.connect(address)
 
         subscriber.setsockopt(zmq.SUBSCRIBE, str.encode(sub_topic))
-        print('SUB: Heartbeat...')
+        print('SUB: ' + sub_topic)
 
         while True:
             print('REC: ' + subscriber.recv().decode())
@@ -52,7 +52,6 @@ class CheckServiceHealth:
         print('Scheduler initialized...')
         scheduler.add_job(self.publish_check_service_health_command,
                           'interval', minutes=int(interval), args=[topic])
-        print('Scheduler Running...')
 
         try:
             scheduler.start()
