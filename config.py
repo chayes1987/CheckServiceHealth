@@ -11,3 +11,4 @@ class Config(Enum):
     ADDRESSES = 2
     PUB_ADDRESS = 3
     PUB_INTERVAL = 4
+    TIME_OUT = 5
