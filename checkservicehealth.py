@@ -16,11 +16,15 @@ import requests
 publisher = None
 context = zmq.Context()
 received_services = []
-services = ['ScheduleAuction', 'StartAuction', 'NotifyBidders', 'RunAuction', 'InitializeAuctionUI',
-            'UpdateBid', 'AnnounceResult']
+services = []
 
 
 class CheckServiceHealth:
+
+    def __init__(self, list_services):
+        global services
+        for key, service in list_services:
+            services.append(service)
 
     @staticmethod
     def parse_message(message, start_tag, end_tag):
@@ -29,14 +33,18 @@ class CheckServiceHealth:
         end_index = substring.index(end_tag)
         return substring[:end_index]
 
-    def initialize_subscriber(self, addresses, sub_topic, time_out):
+    def initialize_subscriber(self, addresses, sub_topic, time_out, web_service_url, smtp_address, smtp_port, username,
+                              password, recipients, subject, msg):
         thread = threading.Thread(target=self.subscribe,
-                                  kwargs={'addresses': addresses, 'sub_topic': str(sub_topic), 'time_out': time_out},
-                                  name='subscribe')
+                                  kwargs={'addresses': addresses, 'sub_topic': str(sub_topic), 'time_out': time_out,
+                                          'web_service_url': web_service_url, 'smtp_address': smtp_address,
+                                          'smtp_port': smtp_port, 'username': username, 'password': password,
+                                          'recipients': recipients, 'subject': subject, 'msg': msg}, name='subscribe')
         thread.daemon = True
         thread.start()
 
-    def subscribe(self, addresses, sub_topic, time_out):
+    def subscribe(self, addresses, sub_topic, time_out, web_service_url, smtp_address, smtp_port, username, password,
+                  recipients, subject, msg):
         subscriber = context.socket(zmq.SUB)
 
         for key, address in addresses:
@@ -53,25 +61,23 @@ class CheckServiceHealth:
 
             if 1 == len(received_services):
                 thread = threading.Thread(target=self.set_timeout,
-                                          kwargs={'time_out': time_out}, name='set_timeout')
+                                          kwargs={'time_out': time_out, 'web_service_url': web_service_url,
+                                                  'smtp_address': smtp_address, 'smtp_port': smtp_port,
+                                                  'username': username, 'password': password, 'recipients': recipients,
+                                                  'subject': subject, 'msg': msg}, name='set_timeout')
                 thread.daemon = True
                 thread.start()
 
     @staticmethod
-    def notify():
-        username = 'online.dutch.auctions@gmail.com'
-        password = 'online.auctions'
-        recipients = ['ch1987@live.ie']
-        subject = 'Service failure...'
-        msg = 'Oh No! The following services are not responding:\n'
+    def notify(smtp_address, smtp_port, username, password, recipients, subject, msg):
+        m = msg + '\n'
         list_services = '\n'.join(set(services) - set(received_services))
-        body = msg + '\n' + list_services
-
+        body = m + '\n' + list_services
         message = '''\From: %s\nTo: %s\nSubject: %s\n\n%s
             ''' % (username, ', '.join(recipients), subject, body)
 
         try:
-            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server = smtplib.SMTP(smtp_address, smtp_port)
             server.ehlo()
             server.starttls()
             server.login(username, password)
@@ -105,22 +111,23 @@ class CheckServiceHealth:
             publisher.send_string(topic)
             print('PUB: ' + topic)
 
-    def set_timeout(self, time_out):
-        self.test_webservice()
+    def set_timeout(self, time_out, web_service_url, smtp_address, smtp_port, username, password,
+                    recipients, subject, msg):
+        self.test_web_service(web_service_url)
         time.sleep(time_out)
         if len(received_services) < len(services):
-            self.notify()
+            self.notify(smtp_address, int(smtp_port), username, password, recipients, subject, msg)
         else:
             print('All Ok...')
         received_services[:] = []
         return
 
     @staticmethod
-    def test_webservice():
+    def test_web_service(web_service_url):
         try:
-            response = requests.get('http://54.171.120.118:8080/placebidservice/bidder/services/checkservice')
+            response = requests.get(web_service_url)
             if not 'true' == response.content:
-                received_services.append('PlaceBid')
+                raise Exception
         except:
             received_services.append('PlaceBid')
             pass
