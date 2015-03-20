@@ -23,6 +23,8 @@ None
 - Installed zmq binding -> sudo easy_install pyzmq
 - Installed config parser -> sudo easy_install configparser
 - Installed enum -> sudo easy_install enum
+- Installed firebase -> sudo easy_install requests==1.1.0
+		               sudo easy_install python-firebase
 
 - Running the service -> sudo python /home/ec2-user/CheckHealthService/main.py
 

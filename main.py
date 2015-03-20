@@ -1,9 +1,11 @@
 __author__ = 'Conor'
 
+# Firebase -> https://pypi.python.org/pypi/python-firebase/1.2
 # Config file -> https://docs.python.org/2/library/configparser.html
 
 from configparser import ConfigParser, Error
 from checkservicehealth import CheckServiceHealth
+from firebase import firebase
 from config import Config
 
 
@@ -19,30 +21,22 @@ def read_config():
         addresses = config.items('Addresses')
         services = config.items('Services')
         web_service_url = config.get('Web Service', 'URL')
-        smtp_address = config.get('Email', 'SMTP_ADDRESS')
-        smtp_port = config.get('Email', 'SMTP_PORT')
-        username = config.get('Email', 'USERNAME')
-        password = config.get('Email', 'PASSWORD')
-        recipients = config.get('Email', 'RECIPIENTS')
-        subject = config.get('Email', 'SUBJECT')
-        message = config.get('Email', 'MESSAGE')
+        firebase_url = config.get('Firebase', 'FIREBASE_URL')
     except (IOError, Error):
         print('Error with config file...')
         return None
 
-    return pub_topic, sub_topic, addresses, pub_addr, interval, time_out, services, web_service_url, smtp_address, \
-        smtp_port, username, password, recipients, subject, message
+    return pub_topic, sub_topic, addresses, pub_addr, interval, time_out, services, web_service_url, firebase_url
 
 
 if __name__ == '__main__':
     conf = read_config()
     if None != conf:
-        checker = CheckServiceHealth(conf[Config.SERVICES])
+        my_firebase = firebase.FirebaseApplication(conf[Config.FIREBASE_URL], authentication=None)
+        checker = CheckServiceHealth(conf[Config.SERVICES], my_firebase)
         checker.initialize_publisher(conf[Config.PUB_ADDRESS])
         print('Publisher initialized...')
         checker.initialize_subscriber(conf[Config.ADDRESSES], str(conf[Config.SUB_TOPIC]), int(conf[Config.TIME_OUT]),
-                                      conf[Config.WEB_SERVICE_URL], conf[Config.SMTP_ADDRESS], conf[Config.SMTP_PORT],
-                                      conf[Config.USERNAME], conf[Config.PASSWORD], conf[Config.RECIPIENTS],
-                                      conf[Config.SUBJECT], conf[Config.MESSAGE])
+                                      conf[Config.WEB_SERVICE_URL])
         print('Subscriber initialized...')
         checker.initialize_scheduler(conf[Config.PUB_TOPIC], conf[Config.PUB_INTERVAL])

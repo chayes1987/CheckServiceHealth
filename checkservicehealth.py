@@ -3,12 +3,10 @@ __author__ = 'Conor'
 # The official documentation was consulted for all three 3rd party libraries used
 # 0mq -> https://learning-0mq-with-pyzmq.readthedocs.org/en/latest/pyzmq/patterns/pubsub.html
 # APScheduler -> https://apscheduler.readthedocs.org/en/latest/userguide.html#code-examples
-# SMTP -> http://stackoverflow.com/questions/10147455/trying-to-send-email-gmail-as-mail-provider-using-python
 # REST -> http://stackoverflow.com/questions/18865666/how-to-query-a-restful-webservice-using-python
 
 from apscheduler.schedulers.background import BlockingScheduler
 import zmq
-import smtplib
 import time
 import threading
 import requests
@@ -17,14 +15,17 @@ publisher = None
 context = zmq.Context()
 received_services = []
 services = []
+my_firebase = None
 
 
 class CheckServiceHealth:
 
-    def __init__(self, list_services):
+    def __init__(self, list_services, firebase):
         global services
         for key, service in list_services:
             services.append(service)
+        global my_firebase
+        my_firebase = firebase
 
     @staticmethod
     def parse_message(message, start_tag, end_tag):
@@ -33,18 +34,14 @@ class CheckServiceHealth:
         end_index = substring.index(end_tag)
         return substring[:end_index]
 
-    def initialize_subscriber(self, addresses, sub_topic, time_out, web_service_url, smtp_address, smtp_port, username,
-                              password, recipients, subject, msg):
+    def initialize_subscriber(self, addresses, sub_topic, time_out, web_service_url):
         thread = threading.Thread(target=self.subscribe,
                                   kwargs={'addresses': addresses, 'sub_topic': str(sub_topic), 'time_out': time_out,
-                                          'web_service_url': web_service_url, 'smtp_address': smtp_address,
-                                          'smtp_port': smtp_port, 'username': username, 'password': password,
-                                          'recipients': recipients, 'subject': subject, 'msg': msg}, name='subscribe')
+                                          'web_service_url': web_service_url}, name='subscribe')
         thread.daemon = True
         thread.start()
 
-    def subscribe(self, addresses, sub_topic, time_out, web_service_url, smtp_address, smtp_port, username, password,
-                  recipients, subject, msg):
+    def subscribe(self, addresses, sub_topic, time_out, web_service_url):
         subscriber = context.socket(zmq.SUB)
 
         for key, address in addresses:
@@ -61,31 +58,24 @@ class CheckServiceHealth:
 
             if 1 == len(received_services):
                 thread = threading.Thread(target=self.set_timeout,
-                                          kwargs={'time_out': time_out, 'web_service_url': web_service_url,
-                                                  'smtp_address': smtp_address, 'smtp_port': smtp_port,
-                                                  'username': username, 'password': password, 'recipients': recipients,
-                                                  'subject': subject, 'msg': msg}, name='set_timeout')
+                                          kwargs={'time_out': time_out, 'web_service_url': web_service_url},
+                                          name='set_timeout')
                 thread.daemon = True
                 thread.start()
 
     @staticmethod
-    def notify(smtp_address, smtp_port, username, password, recipients, subject, msg):
-        m = msg + '\n'
-        list_services = '\n'.join(set(services) - set(received_services))
-        body = m + '\n' + list_services
-        message = '''\From: %s\nTo: %s\nSubject: %s\n\n%s
-            ''' % (username, ', '.join(recipients), subject, body)
+    def update_dashboard():
+        if len(received_services) < len(services):
+            list_services = ' '.join(set(services) - set(received_services))
+            print('Potential issue, dashboard alerted...')
+        else:
+            list_services = ''
+            print('All Ok...')
 
         try:
-            server = smtplib.SMTP(smtp_address, smtp_port)
-            server.ehlo()
-            server.starttls()
-            server.login(username, password)
-            server.sendmail(username, recipients, message)
-            server.close()
-            print('Message Sent...')
+            my_firebase.put('/dashboard', 'message', list_services)
         except:
-            print('Sending failed...')
+            print('Notification failed...')
 
     @staticmethod
     def initialize_publisher(pub_addr):
@@ -111,14 +101,10 @@ class CheckServiceHealth:
             publisher.send_string(topic)
             print('PUB: ' + topic)
 
-    def set_timeout(self, time_out, web_service_url, smtp_address, smtp_port, username, password,
-                    recipients, subject, msg):
+    def set_timeout(self, time_out, web_service_url):
         self.test_web_service(web_service_url)
         time.sleep(time_out)
-        if len(received_services) < len(services):
-            self.notify(smtp_address, int(smtp_port), username, password, recipients, subject, msg)
-        else:
-            print('All Ok...')
+        self.update_dashboard()
         received_services[:] = []
         return
 
