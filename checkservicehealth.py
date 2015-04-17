@@ -13,17 +13,18 @@ import requests
 
 publisher = None
 context = zmq.Context()
-received_services = []
-services = []
+received_service_names = []
+system_service_names = []
 my_firebase = None
 
 
 class CheckServiceHealth:
 
     def __init__(self, list_services, firebase):
-        global services
+        global system_service_names
+        # Set list of service names that are expected to reply
         for key, service in list_services:
-            services.append(service)
+            system_service_names.append(service)
         global my_firebase
         my_firebase = firebase
 
@@ -54,9 +55,10 @@ class CheckServiceHealth:
             message = subscriber.recv().decode()
             print('REC: ' + message)
             service = self.parse_message(message, '<params>', '</params>')
-            received_services.append(service)
+            received_service_names.append(service)
 
-            if 1 == len(received_services):
+            # When the first service replies, set a timeout for the rest
+            if 1 == len(received_service_names):
                 thread = threading.Thread(target=self.set_timeout,
                                           kwargs={'time_out': time_out, 'web_service_url': web_service_url},
                                           name='set_timeout')
@@ -65,8 +67,8 @@ class CheckServiceHealth:
 
     @staticmethod
     def update_dashboard():
-        if len(received_services) < len(services):
-            list_services = ' '.join(set(services) - set(received_services))
+        if len(received_service_names) < len(system_service_names):
+            list_services = ' '.join(set(system_service_names) - set(received_service_names))
             print('Potential issue, dashboard alerted...')
         else:
             list_services = ''
@@ -105,7 +107,7 @@ class CheckServiceHealth:
         self.test_web_service(web_service_url)
         time.sleep(time_out)
         self.update_dashboard()
-        received_services[:] = []
+        received_service_names[:] = []
         return
 
     @staticmethod
@@ -115,5 +117,5 @@ class CheckServiceHealth:
             if not 'true' == response.content:
                 raise Exception
         except:
-            received_services.append('PlaceBid')
+            received_service_names.append('PlaceBid')
             pass
