@@ -14,17 +14,17 @@ import requests
 publisher = None
 context = zmq.Context()
 received_service_names = []
-system_service_names = []
+expected_service_names = []
 my_firebase = None
 
 
 class CheckServiceHealth:
 
     def __init__(self, list_services, firebase):
-        global system_service_names
+        global expected_service_names
         # Set list of service names that are expected to reply
         for key, service in list_services:
-            system_service_names.append(service)
+            expected_service_names.append(service)
         global my_firebase
         my_firebase = firebase
 
@@ -67,8 +67,8 @@ class CheckServiceHealth:
 
     @staticmethod
     def update_dashboard():
-        if len(received_service_names) < len(system_service_names):
-            list_services = ' '.join(set(system_service_names) - set(received_service_names))
+        if len(received_service_names) < len(expected_service_names):
+            list_services = ' '.join(set(expected_service_names) - set(received_service_names))
             print('Potential issue, dashboard alerted...')
         else:
             list_services = ''

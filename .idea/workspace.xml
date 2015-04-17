@@ -25,7 +25,7 @@
     <option name="FILTER_BY_CURRENT_PROJECT" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e99ba436-a87e-4f0d-969d-b341e9aacfca" name="Default" comment="">
+    <list default="true" id="e99ba436-a87e-4f0d-969d-b341e9aacfca" name="Default" comment="Changed email notification to dashboard notification">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/checkservicehealth.py" afterPath="$PROJECT_DIR$/checkservicehealth.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -76,8 +76,8 @@
       <file leaf-file-name="checkservicehealth.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/checkservicehealth.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.400838" vertical-offset="0" max-vertical-offset="2142">
-              <caret line="59" column="72" selection-start-line="59" selection-start-column="72" selection-end-line="59" selection-end-column="72" />
+            <state vertical-scroll-proportion="-0.67178774" vertical-offset="855" max-vertical-offset="2142">
+              <caret line="22" column="48" selection-start-line="22" selection-start-column="48" selection-end-line="22" selection-end-column="48" />
               <folding>
                 <element signature="e#392#455#0" expanded="true" />
               </folding>
@@ -425,13 +425,18 @@
       <created>1426871928072</created>
       <updated>1426871928072</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Changed email notification to dashboard notification">
+      <created>1429308262968</created>
+      <updated>1429308262968</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -448,7 +453,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293011" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -849,8 +853,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/checkservicehealth.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.400838" vertical-offset="0" max-vertical-offset="2142">
-          <caret line="59" column="72" selection-start-line="59" selection-start-column="72" selection-end-line="59" selection-end-column="72" />
+        <state vertical-scroll-proportion="-0.67178774" vertical-offset="855" max-vertical-offset="2142">
+          <caret line="22" column="48" selection-start-line="22" selection-start-column="48" selection-end-line="22" selection-end-column="48" />
           <folding>
             <element signature="e#392#455#0" expanded="true" />
           </folding>
