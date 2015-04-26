@@ -1,4 +1,5 @@
 # CheckServiceHealth
+
 This is the check service health service for my FYP. It is written in Python. It uses APScheduler for scheduling.
 It is a monitoring tool and is responsible for scheduling checks to make sure services are up and running.
 
@@ -14,6 +15,7 @@ None
 - Connected to server instance using PuTTy using ec2-user@PublicDNS and .ppk keyfile for SSH Auth
 
 ## Application Setup Required
+
 - Installed apscheduler -> sudo easy_install apscheduler
 - Installed gcc -> sudo yum install gcc-c++
 - Installed python3.4.2 -> sudo wget http://www.python.org/ftp/python/3.4.2/Python-3.4.2.tgz
